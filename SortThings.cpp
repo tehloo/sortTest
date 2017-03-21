@@ -210,7 +210,7 @@ void merge_sort(int* array, int* helper, int i_begin, int i_end) {
 }
 
 void merge_sort(int* array, int size) {
-	int helper[size] = {0,};
+	int helper[size];
 
 	merge_sort(array, helper, 0, size - 1);
 }
@@ -222,56 +222,115 @@ void show_numbers(int* array, int size) {
 	}
 }
 
-/*
+
 void quick_sort(int* array, int begin, int end) {
-	int pivot = begin;
-	int pivot_val = array[begin];
-	for (int i = begin + 1; i <= end; i++) {
-		if (array[i])
-	}
+    if (begin >= end || end < 0) return;
+	int pivot = (begin + end) / 2;
+	int pivot_val = array[pivot];
+
+    int left = begin;
+    int right = end;
+    cout << endl << "pivot index is " << pivot << " value = " << pivot_val
+         << " from " << begin << " to " << end << endl;
+
+    while(left < right) {
+        while(array[left] < pivot_val) left++;
+        while(array[right] > pivot_val) right--;
+
+        cout << "\n   found target " << left << " and " << right << endl;
+        cout << "    before:"; show_numbers(array, MAX_NUMBERS_SIZE);
+        cout << endl;
+
+        if (left < right) {
+            int temp = array[left];
+            array[left] = array[right];
+            array[right] = temp;
+            left++;
+            right--;
+        } else if (end - begin == 1 && left == right) {
+            return;
+        }
+
+        cout << "    after :"; show_numbers(array, MAX_NUMBERS_SIZE);
+        cout << endl;
+    }
+    cout << "  left = " << left << " right = " << right << endl;
+    if (begin < right) 
+        quick_sort(array, begin, right);
+    if (left < end)
+        quick_sort(array, left, end);
 }
 
 void quick_sort(int* array, int size) {
 	quick_sort(array, 0, size - 1);
 }
 
-*/
+void show_numbers(list<int>& li) {
+	list<int>::iterator it = li.begin();
+	while (it != li.end()) {
+		cout << *it << " ";
+		it++;
+	}
+}
+
+int get_iterator_position(list<int>& li, list<int>::iterator it) {
+    int index = 0;
+    list<int>::iterator it_begin = li.begin();
+    while (it_begin != li.end()) {
+        if (it_begin == it) return index;
+        it_begin++;
+        index++;
+    }
+    return -1;
+}
+
 
 void quick_sort(list<int>& li
 				, list<int>::iterator it_begin
 				, list<int>::iterator it_end) {
 	if (it_begin == it_end)
 		return;
+    cout << endl << get_iterator_position(li, it_begin)
+         << " ~ " << get_iterator_position(li, it_end);
+    cout << endl << " before group it   / ";
+    show_numbers(li);
 
 	list<int>::iterator pivot = it_begin;
-	list<int>::iterator it = it_begin++;
+	list<int>::iterator it = it_begin;
+	list<int>::iterator it_next_of_end = it_end;
+    it_next_of_end++;
+    it++;
 
-	while (it != it_end) {
+
+	while (it != it_next_of_end) {
 		if (*pivot < *it) {
-			li.insert(it_begin, *it);
+			it_begin = li.insert(it_begin, *it);
 			list<int>::iterator it_erase = it;
 			it++;
 			li.erase(it_erase);
-		}
+		} else {
+            it++;
+        }
 	}
+    cout << endl << " ... after group it/ ";
+    show_numbers(li);
+    cout << "... pivot is " << get_iterator_position(li, pivot) << endl;
 
 	list<int>::iterator pre_pivot = pivot;
 	list<int>::iterator post_pivot = pivot;
 
-	quick_sort(li, it_begin, pre_pivot--);
-	quick_sort(li, post_pivot++, it_end);
+    if (pre_pivot != it_begin) {
+        cout << "1..." << endl;
+    	quick_sort(li, it_begin, --pre_pivot);
+    }
+    if (post_pivot != it_end) {
+        cout << "2..." << endl;
+    	quick_sort(li, ++post_pivot, it_end);
+    }
 }
 
 void quick_sort(list<int>& list) {
-	quick_sort(list, list.begin(), list.end()--);
-}
-
-void show_number(list<int>& li) {
-	list<int>::iterator it = li.begin();
-	while (it != li.end()) {
-		cout << *it << " ";
-		it++;
-	}
+	quick_sort(list, list.begin(), --list.end());
 }
 
 
@@ -299,13 +358,16 @@ int main()
 	int length = sizeof(array) / sizeof(int);
 	fill_numbers(array, length);
 	//merge_sort(array, length);
-//	quick_sort(array, length);
+	quick_sort(array, length);
 	show_numbers(array, length);
-
+    cout << endl;
+/*
+    cout << "... generating list" << endl;
 	list<int> li = list<int>();
 	fill_numbers(li, MAX_NUMBERS_SIZE);
 	quick_sort(li);
-//	show_number(li);
+	show_number(li);
+    */
 
 
 #endif
